@@ -3,6 +3,13 @@ import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.Socket;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -23,6 +30,9 @@ import javax.swing.border.EmptyBorder;
  */
 public class RegistrationFrame extends JFrame implements ActionListener {
 
+	Socket clientSocket;
+	BufferedReader clientIn;
+	PrintWriter clientOut;
 	private JPanel contentPane;
 	private JLabel lblName;
 	private JTextField tfUserName;
@@ -33,7 +43,7 @@ public class RegistrationFrame extends JFrame implements ActionListener {
 
 	public void run() {
 		try {
-			RegistrationFrame frame = new RegistrationFrame();
+			RegistrationFrame frame = new RegistrationFrame(clientSocket);
 			frame.setVisible(true);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -42,9 +52,22 @@ public class RegistrationFrame extends JFrame implements ActionListener {
 
 	/**
 	 * Create the frame.
+	 * 
+	 * @param clientSocket
 	 */
-	public RegistrationFrame() {
+	public RegistrationFrame(Socket clientSocket) {
 		super("Registration");
+		this.clientSocket = clientSocket;
+		try {
+
+			clientOut = new PrintWriter(clientSocket.getOutputStream(), true);
+			clientIn = new BufferedReader(new InputStreamReader(
+					clientSocket.getInputStream()));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(0, 0, Global.SCREEN_WIDTH, Global.SCREEN_HEIGHT);
 		contentPane = new JPanel();
@@ -156,6 +179,10 @@ public class RegistrationFrame extends JFrame implements ActionListener {
 			boolean validInput = true;
 			ShareData.userFisrtName = tfUserName.getText();
 			ShareData.userLastName = tfUserLastName.getText();
+			
+			clientOut.println("start");
+			
+			
 			if (ShareData.userFisrtName.equals("")
 					|| ShareData.userLastName.equals("")) {
 				validInput = false;
@@ -175,7 +202,8 @@ public class RegistrationFrame extends JFrame implements ActionListener {
 			}
 
 			if (validInput == true) {
-				TFQuestionFrame qFrame = new TFQuestionFrame();
+				System.out.println("shoul have started");
+				TFQuestionFrame qFrame = new TFQuestionFrame(clientSocket);
 				this.setVisible(false);
 				qFrame.setVisible(true);
 				this.dispose();

@@ -1,6 +1,13 @@
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.Socket;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -20,6 +27,7 @@ import javax.swing.UnsupportedLookAndFeelException;
  * 
  */
 public class InitialFrame extends JFrame implements ActionListener {
+	Socket clientSocket;
 	private JPanel contentPane;
 
 	JMenuBar menuBar;
@@ -33,37 +41,47 @@ public class InitialFrame extends JFrame implements ActionListener {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
 
-		// fancy look
-		// try {
-		// UIManager.setLookAndFeel( UIManager.getSystemLookAndFeelClassName());
-		// } catch (ClassNotFoundException | InstantiationException
-		// | IllegalAccessException | UnsupportedLookAndFeelException e1) {
-		// e1.printStackTrace();
-		// }
+	// fancy look
+	// try {
+	// UIManager.setLookAndFeel( UIManager.getSystemLookAndFeelClassName());
+	// } catch (ClassNotFoundException | InstantiationException
+	// | IllegalAccessException | UnsupportedLookAndFeelException e1) {
+	// e1.printStackTrace();
+	// }
 
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					InitialFrame frame = new InitialFrame();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+	public void run() {
+		try {
+			InitialFrame frame = new InitialFrame(null);
+			frame.setVisible(true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
 	 * Create the frame.
+	 * @param clientSocket 
 	 */
-	public InitialFrame() {
+	public InitialFrame(Socket clientSocket) {
 		super("Question Bank");
+		this.clientSocket = clientSocket;
+//		try {
+////			InputStream clientIn = clientSocket.getInputStream();
+////			OutputStream clientOut = clientSocket.getOutputStream();
+////			PrintWriter pw = new PrintWriter(clientOut, true);
+////			BufferedReader br = new BufferedReader(new InputStreamReader(
+////					clientIn));
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(0, 0, Global.SCREEN_WIDTH, Global.SCREEN_HEIGHT);
 		contentPane = new JPanel();
-
+		
 		menuBar = new JMenuBar();
 		mFile = new JMenu("File");
 		miNew = new JMenuItem("New");
@@ -130,7 +148,7 @@ public class InitialFrame extends JFrame implements ActionListener {
 
 		switch (buttonName) {
 		case "Start Game":
-			RegistrationFrame regFrame = new RegistrationFrame();
+			RegistrationFrame regFrame = new RegistrationFrame(clientSocket);
 			this.setVisible(false);
 			regFrame.setVisible(true);
 

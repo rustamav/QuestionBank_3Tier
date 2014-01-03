@@ -1,5 +1,7 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.Socket;
 import java.sql.SQLException;
 
 import javax.swing.ButtonGroup;
@@ -25,6 +27,7 @@ import javax.swing.border.EmptyBorder;
  */
 public class MCFrame extends JFrame implements ActionListener {
 
+	 Socket clientSocket;
 	private Question q;
 	private int counter;
 	private QuestionAnswerHolder h;
@@ -44,13 +47,14 @@ public class MCFrame extends JFrame implements ActionListener {
 	private JTextArea textArea;
 	private JButton btnNextQuestion;
 	private JPanel contentPane;
+	
 
 	/**
 	 * Launch the application.
 	 */
 	public void run() {
 		try {
-			MCFrame frame = new MCFrame(h);
+			MCFrame frame = new MCFrame(clientSocket);
 			frame.setVisible(true);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -59,8 +63,9 @@ public class MCFrame extends JFrame implements ActionListener {
 
 	/**
 	 * Create the frame.
+	 * @param clientSocket 
 	 */
-	public MCFrame(QuestionAnswerHolder h) {
+	public MCFrame(Socket clientSocket) {
 		super("Multiple Choice Questions");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(0, 0, Global.SCREEN_WIDTH, Global.SCREEN_HEIGHT);
@@ -278,6 +283,12 @@ public class MCFrame extends JFrame implements ActionListener {
 					score += 5;
 				ShareData.userMCScore += score;
 				h.connectionClose();
+				try {
+					clientSocket.close();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				ScoreFrame sFrame = new ScoreFrame();
 				sFrame.setVisible(true);
 				this.dispose();

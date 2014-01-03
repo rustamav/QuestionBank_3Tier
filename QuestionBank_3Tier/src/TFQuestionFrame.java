@@ -1,5 +1,10 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.Socket;
 import java.sql.SQLException;
 
 import javax.swing.GroupLayout;
@@ -21,7 +26,8 @@ import javax.swing.LayoutStyle.ComponentPlacement;
  * 
  */
 public class TFQuestionFrame extends JFrame implements ActionListener {
-
+	Socket clientSocket;
+	
 	private JPanel pTFQuestion;
 	private JLabel lblQuestion;
 	private JButton bTrue;
@@ -29,17 +35,22 @@ public class TFQuestionFrame extends JFrame implements ActionListener {
 	private JButton bNext;
 	private int score;
 	private int counter;
-	private QuestionAnswerHolder h;
-	private Question q;
+//	private QuestionAnswerHolder h;
+//	private Question q;
 	private TFQuestionFrame frame;
 	private JLabel lFeedback;
+
+	private BufferedReader in;
+
+	private DataOutputStream out;
+	
 
 	/**
 	 * Launch the application.
 	 */
 	public void run() {
 		try {
-			frame = new TFQuestionFrame();
+			frame = new TFQuestionFrame(clientSocket);
 			frame.setVisible(true);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -48,9 +59,19 @@ public class TFQuestionFrame extends JFrame implements ActionListener {
 
 	/**
 	 * Create the frame.
+	 * @param clientSocket 
 	 */
-	public TFQuestionFrame() {
+	public TFQuestionFrame(Socket clientSocket) {
 		super("True/False Questions");
+		this.clientSocket = clientSocket;
+		try {
+			in = new BufferedReader(new InputStreamReader(
+					clientSocket.getInputStream()));
+			out = new DataOutputStream(clientSocket.getOutputStream());
+		} catch (IOException e) {
+			return;
+		}
+		
 		score = 0;
 		counter = 1;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -60,19 +81,27 @@ public class TFQuestionFrame extends JFrame implements ActionListener {
 
 		setContentPane(pTFQuestion);
 
+//		try {
+//			h = new QuestionAnswerHolder();
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
+
+//		try {
+//			q = h.getRandomQuestion(0);
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
+
+		String question = null;
 		try {
-			h = new QuestionAnswerHolder();
-		} catch (SQLException e) {
+			question = in.readLine();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		try {
-			q = h.getRandomQuestion(0);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		lblQuestion = new JLabel(counter + " " + q.getQuestion());
+		
+		lblQuestion = new JLabel(counter + " " + question);
 
 		bTrue = new JButton("True");
 		bTrue.addActionListener(this);
@@ -128,19 +157,22 @@ public class TFQuestionFrame extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 
 		String buttonName = e.getActionCommand();
+		try{
 		switch (buttonName) {
 		case "True":
 		case "False":
 			bTrue.setEnabled(false);
 			bFalse.setEnabled(false);
-			if (buttonName.equalsIgnoreCase(q.getCorrectAnswer())
-					&& q.getType() == 0) {
-				score += 3;
+			out.writeBytes(buttonName);
+			
+			if (in.readLine().equalsIgnoreCase("CORRECT")) {
+//				score += 3;
 				lFeedback.setText("Correct!");
 				lFeedback.setVisible(true);
 			} else {
+				
 				lFeedback.setText("Wrong! Correct answer is "
-						+ q.getCorrectAnswer());
+						+ in.readLine());
 				lFeedback.setVisible(true);
 
 			}
@@ -150,22 +182,17 @@ public class TFQuestionFrame extends JFrame implements ActionListener {
 			if (counter == 20) {
 				ShareData.userTFScore = score;
 				this.dispose();
-				MCFrame mcFrame = new MCFrame(h);
+				MCFrame mcFrame = new MCFrame(clientSocket);
 				mcFrame.setVisible(true);
 			} else {
-				try {
-					q = h.getRandomQuestion(0);
-
-					counter++;
-				} catch (SQLException e1) {
-					e1.printStackTrace();
-				}
 				lFeedback.setVisible(false);
-				lblQuestion.setText(counter + " " + q.getQuestion());
+				lblQuestion.setText(counter + " " + in.readLine());
 				bTrue.setEnabled(true);
 				bFalse.setEnabled(true);
 			}
 			break;
+		}//end of switch
+		}catch(IOException e1) {
 		}
 	} // end of actionPerformed()
 }
