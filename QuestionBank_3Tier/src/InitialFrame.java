@@ -51,7 +51,7 @@ public class InitialFrame extends JFrame implements ActionListener {
 
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				try {clientSocket = new Socket("localhost", 2007);
+				try {clientSocket = new Socket("10.144.140.192", 2007);
 				//  Creates a new PrintWriter, with automatic flushing, from an
 				// existing OutputStream.
 					InitialFrame frame = new InitialFrame();

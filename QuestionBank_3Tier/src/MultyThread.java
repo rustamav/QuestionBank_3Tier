@@ -11,8 +11,8 @@ public class MultyThread {
 		System.out.println("Server Started");
 		while (true) {
 			new TinyHttpdConnection(ss.accept());
-			System.out.println("New connection started");
 			MultyThread.nClients++;
+			System.out.println("New connection started" + MultyThread.nClients);
 		}
 	}
 } // sending the socket returned from accept to thread
@@ -20,10 +20,11 @@ public class MultyThread {
 class TinyHttpdConnection extends Thread {
 	Socket sock;
 	boolean isRunning;
-
+	int counter;
 	QuestionAnswerHolder h;
 	TinyHttpdConnection(Socket s) {
 		sock = s;
+		counter=1;
 		isRunning = true;
 		try {
 			h = new QuestionAnswerHolder();
@@ -40,9 +41,9 @@ class TinyHttpdConnection extends Thread {
 		Question q = null;
 		while (isRunning) {
 			try {
-
-				System.out.println("Client number " + MultyThread.nClients
-						+ " connetcted");
+//
+//				System.out.println("Client number " + MultyThread.nClients
+//						+ " connetcted");
 				OutputStream out = sock.getOutputStream();
 				PrintWriter pw = new PrintWriter(out, true);
 				InputStream clientIn = sock.getInputStream();
@@ -63,8 +64,15 @@ class TinyHttpdConnection extends Thread {
 						isRunning = false;
 						break;
 					case "NEXTQUESTION":
-						q = h.getRandomQuestion(0);
-						pw.println(q.getQuestion());
+						if (counter<=20){
+							q = h.getRandomQuestion(0);
+							pw.println(q.getQuestion());
+							}
+						else if (counter<=28){
+							q = h.getRandomQuestion(1);
+							pw.println(q.getQuestion() + "#" + q.getA() + "#" + q.getB() + "#" + q.getC() + "#" + q.getD() + "#" + q.getE());
+							}
+						counter++;
 						// TODO
 						break;
 					case "TRUE":
@@ -74,16 +82,20 @@ class TinyHttpdConnection extends Thread {
 						else
 							pw.println("Wrong");
 						//TODO
-					break;
+						break;
+					case "GETANSWER":
+						pw.println(q.getCorrectAnswer());
+						break;
+					
 					}
-//				pw.println(clientMessage + " Replied");
 			}
 			catch(NullPointerException e){
+				isRunning = false;
 				System.out.println("Connection closed");
 			}
 			catch(SocketException e){
 				isRunning = false;
-				System.out.println("Connectionbla closed");
+				System.out.println("Connection2 closed");
 				try {
 					sock.close();
 				} catch (IOException e1) {
@@ -92,6 +104,8 @@ class TinyHttpdConnection extends Thread {
 				}
 			}
 			catch (SQLException e) {
+				isRunning = false;
+				System.out.println("Database failure");
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {

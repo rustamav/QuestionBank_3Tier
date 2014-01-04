@@ -221,12 +221,11 @@ public class TFQuestionFrame extends JFrame implements ActionListener {
 			if (serverMessage.equalsIgnoreCase("CORRECT")) {
 				lFeedback.setText("Correct!");
 				lFeedback.setVisible(true);
-			} else if (serverMessage.equalsIgnoreCase("INCORRECT")) {
-				pw.println("GetAnswer");
+			} else if (serverMessage.equalsIgnoreCase("WRONG")) {
 				noResponse = true;
 				while (noResponse) {
 					try {
-						pw.println(buttonName);
+						pw.println("GetAnswer");
 						serverMessage = br.readLine();
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
@@ -257,11 +256,10 @@ public class TFQuestionFrame extends JFrame implements ActionListener {
 			// } catch (SQLException e1) {
 			// e1.printStackTrace();
 			// }
-			pw.println("NextQuestion");
 			noResponse = true;
 			while (noResponse) {
 				try {
-					pw.println(buttonName);
+					pw.println("NextQuestion");
 					serverMessage = br.readLine();
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
@@ -272,6 +270,9 @@ public class TFQuestionFrame extends JFrame implements ActionListener {
 					noResponse = false;
 			}
 
+			/*if(serverMessage.equalsIgnoreCase("STARTMC")){
+				MCFrame mcFrame = new MCFrame(socket);
+			}*/
 			
 			lFeedback.setVisible(false);
 			lblQuestion.setText(counter + " " + serverMessage);
