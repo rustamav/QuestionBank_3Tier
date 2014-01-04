@@ -7,7 +7,7 @@ public class MultyThread {
 	static int nClients = 0;
 
 	public static void main(String argv[]) throws IOException {
-		ServerSocket ss = new ServerSocket(2007);
+		ServerSocket ss = new ServerSocket(2008);
 		System.out.println("Server Started");
 		while (true) {
 			new TinyHttpdConnection(ss.accept());
@@ -77,7 +77,21 @@ class TinyHttpdConnection extends Thread {
 					break;
 					}
 //				pw.println(clientMessage + " Replied");
-			} catch (SQLException e) {
+			}
+			catch(NullPointerException e){
+				System.out.println("Connection closed");
+			}
+			catch(SocketException e){
+				isRunning = false;
+				System.out.println("Connectionbla closed");
+				try {
+					sock.close();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+			catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
