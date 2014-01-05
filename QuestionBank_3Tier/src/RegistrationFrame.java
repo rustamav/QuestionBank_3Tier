@@ -3,6 +3,12 @@ import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.Socket;
 
 import javax.swing.GroupLayout;
@@ -23,7 +29,7 @@ import javax.swing.border.EmptyBorder;
  * 
  */
 public class RegistrationFrame extends JFrame implements ActionListener {
-Socket clientSocket;
+	Socket clientSocket;
 	private JPanel contentPane;
 	private JLabel lblName;
 	private JTextField tfUserName;
@@ -31,6 +37,8 @@ Socket clientSocket;
 	private JTextField tfUserLastName;
 	private JButton bStart;
 	private JDialog dInvalidInput;
+	private PrintWriter pw;
+	private BufferedReader br;
 
 	public void run() {
 		try {
@@ -43,11 +51,24 @@ Socket clientSocket;
 
 	/**
 	 * Create the frame.
-	 * @param clientSocket 
+	 * 
+	 * @param clientSocket
 	 */
 	public RegistrationFrame(Socket clientSocket) {
 		super("Registration");
 		this.clientSocket = clientSocket;
+		InputStream clientIn = null;
+		OutputStream clientOut = null;
+		try {
+			clientIn = clientSocket.getInputStream();
+			clientOut = clientSocket.getOutputStream();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		pw = new PrintWriter(clientOut, true);
+
+		br = new BufferedReader(new InputStreamReader(clientIn));
+
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(0, 0, Global.SCREEN_WIDTH, Global.SCREEN_HEIGHT);
 		contentPane = new JPanel();
@@ -157,28 +178,41 @@ Socket clientSocket;
 		switch (action) {
 		case "Start":
 			boolean validInput = true;
-//			ShareData.userFisrtName = tfUserName.getText();
-//			ShareData.userLastName = tfUserLastName.getText();
-//			if (ShareData.userFisrtName.equals("")
-//					|| ShareData.userLastName.equals("")) {
-//				validInput = false;
-//				dInvalidInput = new JDialog(this, "Error!");
-//				dInvalidInput.setSize(new Dimension(200, 100));
-//				dInvalidInput.setLocation(new Point(Global.SCREEN_WIDTH / 2,
-//						Global.SCREEN_HEIGHT / 2));
-//				JLabel lError = new JLabel("Please fill all the fields");
-//				JButton ok = new JButton("OK");
-//				ok.addActionListener(this);
-//				dInvalidInput.getContentPane().setLayout(new GridLayout(2, 1));
-//				dInvalidInput.getContentPane().add(lError);
-//				dInvalidInput.getContentPane().add(ok);
-//				dInvalidInput.setVisible(true);
-//				dInvalidInput.setFocusable(true);
-//				dInvalidInput.setResizable(false);
-//			}
+			String userFisrtName = tfUserName.getText();
+			String userLastName = tfUserLastName.getText();
+			if (userFisrtName.equals("") || userLastName.equals("")) {
+				validInput = false;
+				dInvalidInput = new JDialog(this, "Error!");
+				dInvalidInput.setSize(new Dimension(200, 100));
+				dInvalidInput.setLocation(new Point(Global.SCREEN_WIDTH / 2,
+						Global.SCREEN_HEIGHT / 2));
+				JLabel lError = new JLabel("Please fill all the fields");
+				JButton ok = new JButton("OK");
+				ok.addActionListener(this);
+				dInvalidInput.getContentPane().setLayout(new GridLayout(2, 1));
+				dInvalidInput.getContentPane().add(lError);
+				dInvalidInput.getContentPane().add(ok);
+				dInvalidInput.setVisible(true);
+				dInvalidInput.setFocusable(true);
+				dInvalidInput.setResizable(false);
+			}
 
 			if (validInput == true) {
+				String serverMessage = null;
+				pw.println("REGUSER");
+				try {
+					serverMessage = br.readLine();
+				} catch (IOException e1) {
+
+					e1.printStackTrace();
+				}
+				if (serverMessage.equalsIgnoreCase("NAME"))
+					pw.println(userFisrtName + " " + userLastName);
+				else
+					pw.println("REGUSER");
+
 				TFQuestionFrame qFrame = new TFQuestionFrame(clientSocket);
+				System.out.println("sucessfully started TF");
 				this.setVisible(false);
 				qFrame.setVisible(true);
 				this.dispose();

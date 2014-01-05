@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.sql.SQLException;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -34,7 +33,6 @@ public class TFQuestionFrame extends JFrame implements ActionListener {
 	private JButton bTrue;
 	private JButton bFalse;
 	private JButton bNext;
-	private int score;
 	private int counter;
 	private TFQuestionFrame frame;
 	private JLabel lFeedback;
@@ -70,31 +68,30 @@ public class TFQuestionFrame extends JFrame implements ActionListener {
 			clientIn = clientSocket.getInputStream();
 			clientOut = clientSocket.getOutputStream();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 
 		pw = new PrintWriter(clientOut, true);
-		//  Creates a new PrintWriter, with automatic flushing, from an
-		// existing OutputStream.
+
 		br = new BufferedReader(new InputStreamReader(clientIn));
-		// BufferedReader stdIn = new BufferedReader(new InputStreamReader(
-		// System.in));
+
 		boolean noResponse = true;
 		String serverMessage = null;
 		while (noResponse) {
 			try {
 				pw.println("NextQuestion");
+
 				serverMessage = br.readLine();
+
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+
 				e.printStackTrace();
 			}
 
 			if (serverMessage != null)
 				noResponse = false;
 		}
-		score = 0;
 		counter = 1;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(0, 0, Global.SCREEN_WIDTH, Global.SCREEN_HEIGHT);
@@ -211,7 +208,7 @@ public class TFQuestionFrame extends JFrame implements ActionListener {
 					pw.println(buttonName);
 					serverMessage = br.readLine();
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
+
 					e1.printStackTrace();
 				}
 
@@ -228,7 +225,7 @@ public class TFQuestionFrame extends JFrame implements ActionListener {
 						pw.println("GetAnswer");
 						serverMessage = br.readLine();
 					} catch (IOException e1) {
-						// TODO Auto-generated catch block
+
 						e1.printStackTrace();
 					}
 
@@ -243,26 +240,14 @@ public class TFQuestionFrame extends JFrame implements ActionListener {
 			break;
 
 		case "Next":
-			// if (counter == 20) {
-			// ShareData.userTFScore = score;
-			// this.dispose();
-			// MCFrame mcFrame = new MCFrame(h);
-			// mcFrame.setVisible(true);
-			// } else {
-			// try {
-			// q = h.getRandomQuestion(0);
-			//
-			// counter++;
-			// } catch (SQLException e1) {
-			// e1.printStackTrace();
-			// }
+			counter++;
 			noResponse = true;
 			while (noResponse) {
 				try {
 					pw.println("NextQuestion");
 					serverMessage = br.readLine();
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
+
 					e1.printStackTrace();
 				}
 
@@ -270,10 +255,12 @@ public class TFQuestionFrame extends JFrame implements ActionListener {
 					noResponse = false;
 			}
 
-			/*if(serverMessage.equalsIgnoreCase("STARTMC")){
-				MCFrame mcFrame = new MCFrame(socket);
-			}*/
-			
+			if (serverMessage.equalsIgnoreCase("STARTMC")) {
+				MCFrame mcFrame = new MCFrame(clientSocket);
+				mcFrame.setVisible(true);
+				this.dispose();
+			}
+
 			lFeedback.setVisible(false);
 			lblQuestion.setText(counter + " " + serverMessage);
 			bTrue.setEnabled(true);

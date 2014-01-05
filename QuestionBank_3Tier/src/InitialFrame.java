@@ -1,23 +1,16 @@
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.net.Socket;
 
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
 /**
  * Initial Frame creates initial window to start or exit the program
@@ -51,7 +44,7 @@ public class InitialFrame extends JFrame implements ActionListener {
 
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				try {clientSocket = new Socket("10.144.140.192", 2007);
+				try {clientSocket = new Socket("10.144.140.194", 2008);
 				//  Creates a new PrintWriter, with automatic flushing, from an
 				// existing OutputStream.
 					InitialFrame frame = new InitialFrame();
@@ -144,7 +137,6 @@ public class InitialFrame extends JFrame implements ActionListener {
 			regFrame.setVisible(true);
 
 			this.dispose();
-			System.out.println("start");
 			break;
 		case "Exit":
 			System.exit(0);
