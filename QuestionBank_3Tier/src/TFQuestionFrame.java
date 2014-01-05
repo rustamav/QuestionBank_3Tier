@@ -19,9 +19,9 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 /**
- * TFQuestionFrame creates window to ask multiple choice questions. When
- * answered, it checks the correct answer and provides feedback. Each correct
- * answer is worth 3 points.
+ * TFQuestionFrame creates window to ask true-false questions that are requested
+ * from the server. When answered, the server checks the correct answer and
+ * provides feedback. Each correct answer is worth 3 points.
  * 
  * @author Rustam Alashrafov, Abdykerim Erikov
  * 
@@ -39,7 +39,7 @@ public class TFQuestionFrame extends JFrame implements ActionListener {
 	private Socket clientSocket;
 	private PrintWriter pw;
 	private BufferedReader br;
-	String serverMessage = null;
+	private String serverMessage = null;
 
 	/**
 	 * Launch the application.

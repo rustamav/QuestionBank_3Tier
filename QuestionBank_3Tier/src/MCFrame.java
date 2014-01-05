@@ -22,22 +22,21 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
 
 /**
- * MCFrame creates window to ask multiple choice questions. When answered, it
- * checks the correct answer and provides feedback. Each correct answer is worth
- * 5 points.
+ * MCFrame creates window to ask multiple choice questions that are requested
+ * from the server. When answered, the server checks the correct answer and
+ * provides feedback. Each correct answer is worth 5 points.
  * 
  * @author Rustam Alashrafov, Abdykerim Erikov
  * 
  */
 public class MCFrame extends JFrame implements ActionListener {
 
-	Socket clientSocket;
+	private Socket clientSocket;
 	boolean answerRequested;
 	private PrintWriter pw;
 	private BufferedReader br;
-	String serverMessage = null;
-
-	private Question q;
+	private String serverMessage = null;
+	
 	private int counter;
 	private String userAnswer;
 
@@ -69,6 +68,8 @@ public class MCFrame extends JFrame implements ActionListener {
 
 	/**
 	 * Create the frame.
+	 * 
+	 * @param clientSocket
 	 */
 	public MCFrame(Socket clientSocket) {
 		super("Multiple Choice Questions");
@@ -329,8 +330,6 @@ public class MCFrame extends JFrame implements ActionListener {
 				lblCorrectAnswer.setVisible(true);
 				cbExpl.setText(parsedMessage[1]);
 				cbExpl.setEnabled(true);
-				// answerRequested = true;
-
 			}
 			pw.println("NEXTQUESTION");
 			try {
@@ -340,11 +339,9 @@ public class MCFrame extends JFrame implements ActionListener {
 				e1.printStackTrace();
 			}
 
-			System.out.println(serverMessage);
 			if (serverMessage.equalsIgnoreCase("STARTSCORE")) {
 
 				ScoreFrame sFrame = new ScoreFrame(clientSocket);
-
 				sFrame.setVisible(true);
 				this.dispose();
 			} else {

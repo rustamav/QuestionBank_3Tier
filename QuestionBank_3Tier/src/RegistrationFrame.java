@@ -24,12 +24,13 @@ import javax.swing.border.EmptyBorder;
 
 /**
  * RegistrationFrame class creates window to ask user for name and last name.
+ * Then it sends these details to the server.
  * 
  * @author Rustam Alashrafov, Abdykerim Erikov
  * 
  */
 public class RegistrationFrame extends JFrame implements ActionListener {
-	Socket clientSocket;
+	private Socket clientSocket;
 	private JPanel contentPane;
 	private JLabel lblName;
 	private JTextField tfUserName;
@@ -212,7 +213,6 @@ public class RegistrationFrame extends JFrame implements ActionListener {
 					pw.println("REGUSER");
 
 				TFQuestionFrame qFrame = new TFQuestionFrame(clientSocket);
-				System.out.println("sucessfully started TF");
 				this.setVisible(false);
 				qFrame.setVisible(true);
 				this.dispose();

@@ -13,7 +13,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 /**
- * Initial Frame creates initial window to start or exit the program
+ * Initial Frame creates initial window for the client to start or exit the
+ * program. It connects to the server.
  * 
  * @author Rustam Alashrafov, Abdykerim Erikov
  * 
@@ -21,40 +22,41 @@ import javax.swing.JPanel;
 public class InitialFrame extends JFrame implements ActionListener {
 	private JPanel contentPane;
 	private static Socket clientSocket;
-	JMenuBar menuBar;
-	JMenu mFile;
-	JMenuItem miNew;
-	JMenuItem miExit;
+	private JMenuBar menuBar;
+	private JMenu mFile;
+	private JMenuItem miNew;
+	private JMenuItem miExit;
 
-	JButton bStartGame;
-	JButton bExit;
+	private JButton bStartGame;
+	private JButton bExit;
 
 	/**
-	 * Launch the application.
+	 * Launch the application for the client.
 	 */
 	public static void main(String[] args) {
 
 		// fancy look
 		// try {
 		// UIManager.setLookAndFeel( UIManager.getSystemLookAndFeelClassName());
-		// } catch (ClassNotFoundException | InstantiationException
-		// | IllegalAccessException | UnsupportedLookAndFeelException e1) {
+		// } catch (ClassNotFoundException | InstantiationException |
+		// IllegalAccessException | UnsupportedLookAndFeelException e1) {
 		// e1.printStackTrace();
 		// }
 
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				try {clientSocket = new Socket("10.144.140.194", 2008);
-				//  Creates a new PrintWriter, with automatic flushing, from an
-				// existing OutputStream.
+				try {
+					// write ip address instead of localhost if your server is
+					// not on localhost
+					clientSocket = new Socket("localhost", 2014);
 					InitialFrame frame = new InitialFrame();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
-			});
-		
+		});
+
 	}
 
 	/**

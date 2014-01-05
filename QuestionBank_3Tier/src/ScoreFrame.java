@@ -18,14 +18,15 @@ import javax.swing.border.EmptyBorder;
 
 /**
  * ScoreFrame class creates window where the user can see his score in bar
- * charts and percentages.
+ * charts and percentages. The scores and the name of the user are received from
+ * the server.
  * 
  * @author Rustam Alashrafov, Abdykerim Erikov
  * 
  */
 public class ScoreFrame extends JFrame {
 	private JPanel contentPane;
-	Socket clientSocket;
+	private Socket clientSocket;
 	private PrintWriter pw;
 	private BufferedReader br;
 
@@ -58,17 +59,13 @@ public class ScoreFrame extends JFrame {
 			e.printStackTrace();
 		}
 		pw = new PrintWriter(clientOut, true);
-		//  Creates a new PrintWriter, with automatic flushing, from an
-		// existing OutputStream.
 		br = new BufferedReader(new InputStreamReader(clientIn));
-		// BufferedReader stdIn = new BufferedReader(new InputStreamReader(
-		// System.in));
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(0, 0, Global.SCREEN_WIDTH, Global.SCREEN_HEIGHT);
 
 		pw.println("SendScores");
-		String serverMessage=null;
+		String serverMessage = null;
 		try {
 			serverMessage = br.readLine();
 		} catch (IOException e) {
@@ -86,7 +83,8 @@ public class ScoreFrame extends JFrame {
 				"Multiple Choice Score: " + score2 + "/40.0 (" + score2 / 40
 						* 100 + "%)" };
 
-		contentPane = new SimpleBarChart(scores, labels, userName + "  statistics: ");
+		contentPane = new SimpleBarChart(scores, labels, userName
+				+ "  statistics: ");
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		pw.println("QUIT");
@@ -94,7 +92,7 @@ public class ScoreFrame extends JFrame {
 	}
 
 	/**
-	 * SimpleBarChart draws barcharts.
+	 * SimpleBarChart draws bar charts.
 	 * 
 	 * @author Rustam Alashrafov, Abdykerim Erikov
 	 * 
